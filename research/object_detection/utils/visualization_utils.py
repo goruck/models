@@ -199,7 +199,7 @@ def draw_bounding_box_on_image(image,
   draw.line([(left, top), (left, bottom), (right, bottom),
              (right, top), (left, top)], width=thickness, fill=color)
   try:
-    font = ImageFont.truetype('arial.ttf', 24)
+    font = ImageFont.truetype('arial.ttf', 12) # changed from 24 by LSA 2 Jun 19
   except IOError:
     font = ImageFont.load_default()
 
