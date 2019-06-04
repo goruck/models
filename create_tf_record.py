@@ -1,15 +1,14 @@
-# Copyright (c) 2019 Lindo St. Angel
-#
-# Based on research/object_detection/dataset_tools/create_pascal_tf_record.py
-#
-# ==============================================================================
-
-"""Convert dataset to TFRecord for object_detection.
+"""
+Convert dataset to TFRecord for object_detection.
 
 Example usage:
     python3 create_tf_record.py \
         --data_dir=/home/lindo/develop/tensorflow/models \
         --output_dir=/home/lindo/develop/tensorflow/models/tf_record
+
+Based on research/object_detection/dataset_tools/create_pascal_tf_record.py
+
+Copyright (c) 2019 Lindo St. Angel
 """
 
 import hashlib
