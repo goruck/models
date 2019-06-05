@@ -175,6 +175,20 @@ def create_tf_record(output_filename,
       except ValueError:
         logging.warning('Invalid example: %s, ignoring.', xml_path)
 
+def gen_trainval_list(images_path):
+  """Creates a list of image names without file extensions.
+     The list items will not match the ordering of the images on disk.
+
+  Args:
+    images_path: Path to where images are located.
+  """
+  trainval_list = []
+  for file in os.listdir(images_path):
+    if file.endswith('.jpg'):
+      name = os.path.basename(file).split('.')[0]
+      trainval_list.append(name)
+  return trainval_list
+
 def main(_):
   data_dir = FLAGS.data_dir
   label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
@@ -182,8 +196,9 @@ def main(_):
   logging.info('Reading from dataset.')
   image_dir = os.path.join(data_dir, 'images')
   annotations_dir = os.path.join(data_dir, 'annotations')
-  examples_path = os.path.join(annotations_dir, 'trainval.txt')
-  examples_list = dataset_util.read_examples_list(examples_path)
+  #examples_path = os.path.join(annotations_dir, 'trainval.txt')
+  #examples_list = dataset_util.read_examples_list(examples_path)
+  examples_list = gen_trainval_list(image_dir)
 
   # Test images are not included in the downloaded data set, so we shall perform
   # our own split.
