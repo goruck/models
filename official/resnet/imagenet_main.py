@@ -165,7 +165,6 @@ def input_fn(is_training,
              num_epochs=1,
              dtype=tf.float32,
              datasets_num_private_threads=None,
-             num_parallel_batches=1,
              parse_record_fn=parse_record,
              input_context=None,
              drop_remainder=False,
@@ -179,7 +178,6 @@ def input_fn(is_training,
     num_epochs: The number of epochs to repeat the dataset.
     dtype: Data type to use for images/features
     datasets_num_private_threads: Number of private threads for tf.data.
-    num_parallel_batches: Number of parallel batches for tf.data.
     parse_record_fn: Function to use for parsing the records.
     input_context: A `tf.distribute.InputContext` object passed in by
       `tf.distribute.Strategy`.
@@ -223,7 +221,6 @@ def input_fn(is_training,
       num_epochs=num_epochs,
       dtype=dtype,
       datasets_num_private_threads=datasets_num_private_threads,
-      num_parallel_batches=num_parallel_batches,
       drop_remainder=drop_remainder,
       tf_data_experimental_slack=tf_data_experimental_slack,
   )
@@ -351,11 +348,14 @@ def imagenet_model_fn(features, labels, mode, params):
   )
 
 
-def define_imagenet_flags(dynamic_loss_scale=False, fp16_implementation=False):
+def define_imagenet_flags(dynamic_loss_scale=False,
+                          fp16_implementation=False,
+                          enable_xla=False):
   resnet_run_loop.define_resnet_flags(
       resnet_size_choices=['18', '34', '50', '101', '152', '200'],
       dynamic_loss_scale=dynamic_loss_scale,
-      fp16_implementation=fp16_implementation)
+      fp16_implementation=fp16_implementation,
+      enable_xla=enable_xla)
   flags.adopt_module_key_flags(resnet_run_loop)
   flags_core.set_defaults(train_epochs=90)
 

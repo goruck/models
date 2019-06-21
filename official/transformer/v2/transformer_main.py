@@ -39,6 +39,7 @@ from official.transformer.v2 import transformer
 from official.transformer.v2 import translate
 from official.utils.flags import core as flags_core
 from official.utils.logs import logger
+from official.utils.misc import keras_utils
 from official.utils.misc import distribution_utils
 
 
@@ -117,10 +118,17 @@ class TransformerTask(object):
     params["use_synthetic_data"] = flags_obj.use_synthetic_data
     params["batch_size"] = flags_obj.batch_size or params["default_batch_size"]
     params["repeat_dataset"] = None
+    params["dtype"] = flags_core.get_tf_dtype(flags_obj)
 
   def train(self):
     """Trains the model."""
     params, flags_obj, is_train = self.params, self.flags_obj, True
+    # Sets config options.
+    keras_utils.set_session_config(
+        enable_xla=flags_obj.enable_xla,
+        enable_grappler_layout_optimizer=
+        flags_obj.enable_grappler_layout_optimizer)
+
     _ensure_dir(flags_obj.model_dir)
     if self.distribution_strategy:
       with self.distribution_strategy.scope():
@@ -239,6 +247,10 @@ class TransformerTask(object):
         params["optimizer_adam_beta1"],
         params["optimizer_adam_beta2"],
         epsilon=params["optimizer_adam_epsilon"])
+    if params["dtype"] == tf.float16:
+      opt = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
+          opt, loss_scale=flags_core.get_loss_scale(self.flags_obj,
+                                                    default_for_fp16="dynamic"))
     return opt
 
 
@@ -251,6 +263,11 @@ def _ensure_dir(log_dir):
 def main(_):
   flags_obj = flags.FLAGS
   with logger.benchmark_context(flags_obj):
+    if flags_core.get_tf_dtype(flags_obj) == 'float16':
+      policy = tf.keras.mixed_precision.experimental.Policy(
+          'infer_float32_vars')
+      tf.keras.mixed_precision.experimental.set_policy(policy)
+
     task = TransformerTask(flags_obj)
     if flags_obj.mode == "train":
       task.train()
