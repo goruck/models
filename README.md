@@ -1,3 +1,5 @@
+**This project as been depreciated by [edge-tpu-train](https://github.com/goruck/edge-tpu-train).**
+
 # TensorFlow Models with Edge TPU Training
 
 This repository contains a number of different models implemented in [TensorFlow](https://www.tensorflow.org) as well as addtional code added to train object detection models for the edge tpu:
